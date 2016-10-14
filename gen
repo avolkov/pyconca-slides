@@ -61,7 +61,7 @@ for item in [blank] + get_schedule():
     with open(temp_svg, "w") as f:
         f.write(out_bytes)
     cmd = " ".join([
-        "/Applications/Inkscape.app/Contents/Resources/bin/inkscape",
+        "/usr/bin/inkscape",
         "-f",
         "'%s'" % (temp_svg, ),
         "-e",

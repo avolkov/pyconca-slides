@@ -107,7 +107,7 @@ def _download_schedule():
 
 
 def get_schedule():
-    schedule = cached_get(".schedule.json", _download_schedule)
+    # schedule = cached_get(".schedule.json", _download_schedule)
     return [
         {
             "abstract": "",
@@ -217,7 +217,8 @@ def get_schedule():
             "room": "Keynote",
             "tags": ""
         },
-    ] + schedule
+    ]
+    #  + schedule
 
 
 def get_session_staff():

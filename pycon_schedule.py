@@ -15,6 +15,7 @@ API_SECRET = ""
 API_BASE_URL = "https://us.pycon.org/2016/"
 SCHEDULE_JSON_URL = "https://us.pycon.org/2016/schedule/conference.json"
 
+
 class API(object):
     def __init__(self):
         self.api_key = API_KEY
@@ -51,8 +52,8 @@ class API(object):
             signature['Content-Type'] = 'application/json'
 
         # Make the actual request to the PyCon website.
-        r = requests.request(method, url, data=body, headers=signature,
-                                          verify=False)
+        r = requests.request(
+            method, url, data=body, headers=signature, verify=False)
         r.raise_for_status()
 
         # OK, all is well; return the response.
@@ -82,6 +83,7 @@ class API(object):
             'X-API-Timestamp': timestamp,
         }
 
+
 def cached_get(outf_name, func):
     data_file = os.path.join(os.path.dirname(__file__), outf_name)
     if not os.path.exists(data_file):
@@ -97,10 +99,12 @@ def cached_get(outf_name, func):
 
     return res
 
+
 def _download_schedule():
     resp = requests.get(SCHEDULE_JSON_URL, verify=False)
     resp.raise_for_status()
     return resp.json()
+
 
 def get_schedule():
     schedule = cached_get(".schedule.json", _download_schedule)
@@ -215,8 +219,11 @@ def get_schedule():
         },
     ] + schedule
 
+
 def get_session_staff():
-    staff = cached_get(".session-staff.json", lambda: API().get("schedule/session-staff.json"))
+    staff = cached_get(
+        ".session-staff.json",
+        lambda: API().get("schedule/session-staff.json"))
     res = {}
     for session_staff in staff["data"]:
         ck = session_staff["conf_key"]

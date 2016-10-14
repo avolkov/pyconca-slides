@@ -27,11 +27,11 @@ for item in [blank] + get_schedule():
 
     svg = (
         template
-            .replace("{{title}}", escape(item["name"] if is_reg else authors))
-            .replace("{{authors}}", escape(authors if is_reg else item["name"]))
+        .replace("{{title}}", escape(item["name"] if is_reg else authors))
+        .replace("{{authors}}", escape(authors if is_reg else item["name"]))
     )
     if item["name"]:
-        fname = "%s - %s - %s" %(
+        fname = "%s - %s - %s" % (
             item["room"],
             item["start"],
             item["name"],
@@ -39,14 +39,14 @@ for item in [blank] + get_schedule():
     else:
         fname = "BLANK"
     fname = fname.replace("/", "-")
-    png_name = "output/%s.png" %(fname, )
+    png_name = "output/%s.png" % (fname, )
     out_bytes = svg.encode("utf-8")
 
     print
     print "=" * 80
     print fname
 
-    hash_fname = "output/.%s.hash" %(fname, )
+    hash_fname = "output/.%s.hash" % (fname, )
     new_hash = hashlib.sha256(out_bytes).hexdigest()
     try:
         cur_hash = open(hash_fname).read()
@@ -54,7 +54,7 @@ for item in [blank] + get_schedule():
         cur_hash = None
 
     if new_hash == cur_hash and os.path.exists(png_name):
-        print "%s is unchanged (skipping)" %(png_name, )
+        print "%s is unchanged (skipping)" % (png_name, )
         continue
 
     temp_svg = "/tmp/out.svg"
@@ -63,7 +63,7 @@ for item in [blank] + get_schedule():
     cmd = " ".join([
         "/Applications/Inkscape.app/Contents/Resources/bin/inkscape",
         "-f",
-        "'%s'" %(temp_svg, ),
+        "'%s'" % (temp_svg, ),
         "-e",
         "/tmp/out.png"
     ])
@@ -75,4 +75,4 @@ for item in [blank] + get_schedule():
     with open(hash_fname, "w") as f:
         f.write(new_hash)
     os.unlink(temp_svg)
-    print "mv /tmp/output.png --> %s" %(png_name, )
+    print "mv /tmp/output.png --> %s" % (png_name, )

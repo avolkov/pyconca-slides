@@ -13,10 +13,10 @@ for f in glob.glob("output/*.png"):
     if not sp:
         print "SKIPPING:", f
         continue
-    room_dir = "pycon-titles-by-room/%s" %(room, )
+    room_dir = "pycon-titles-by-room/%s" % (room, )
     if not os.path.exists(room_dir):
         os.mkdir(room_dir)
-    outf = room_dir + "/" + name 
+    outf = room_dir + "/" + name
     if os.path.exists(outf):
         os.unlink(outf)
     os.link(f, outf)

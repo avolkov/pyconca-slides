@@ -1,0 +1,24 @@
+#!/usr/bin/env python
+
+import os
+import glob
+import shutil
+
+if not os.path.exists("pycon-titles-by-room"):
+    os.mkdir("pycon-titles-by-room")
+
+for f in glob.glob("output/*.png"):
+    name = os.path.basename(f)
+    room, sp, _ = name.partition(" - ")
+    if not sp:
+        print "SKIPPING:", f
+        continue
+    room_dir = "pycon-titles-by-room/%s" %(room, )
+    if not os.path.exists(room_dir):
+        os.mkdir(room_dir)
+    outf = room_dir + "/" + name 
+    if os.path.exists(outf):
+        os.unlink(outf)
+    os.link(f, outf)
+
+shutil.copy("output/BLANK.png", "pycon-titles-by-room/BLANK.png")

@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+import os
+import hashlib
+
+from cgi import escape
+
+from pycon_schedule import get_schedule
+
+template = open("slide_alt.svg").read()
+
+if not os.path.exists("output"):
+    os.mkdir("output")
+
+blank = {
+    "room": "BLANK",
+    "start": "BLANK",
+    "name": "",
+    "authors": [],
+}
+
+for item in [blank] + get_schedule():
+    if not item["room"]:
+        continue
+    authors = ", ".join(item["authors"])
+
+    is_reg = item.get("kind") != "keynote"
+
+    svg = (
+        template
+            .replace("{{title}}", escape(item["name"] if is_reg else authors))
+            .replace("{{authors}}", escape(authors if is_reg else item["name"]))
+    )
+    if item["name"]:
+        fname = "%s - %s - %s" %(
+            item["room"],
+            item["start"],
+            item["name"],
+        )
+    else:
+        fname = "BLANK"
+    fname = fname.replace("/", "-")
+    png_name = "output/%s.png" %(fname, )
+    out_bytes = svg.encode("utf-8")
+
+    print
+    print "=" * 80
+    print fname
+
+    hash_fname = "output/.%s.hash" %(fname, )
+    new_hash = hashlib.sha256(out_bytes).hexdigest()
+    try:
+        cur_hash = open(hash_fname).read()
+    except IOError:
+        cur_hash = None
+
+    if new_hash == cur_hash and os.path.exists(png_name):
+        print "%s is unchanged (skipping)" %(png_name, )
+        continue
+
+    temp_svg = "/tmp/out.svg"
+    with open(temp_svg, "w") as f:
+        f.write(out_bytes)
+    cmd = " ".join([
+        "/Applications/Inkscape.app/Contents/Resources/bin/inkscape",
+        "-f",
+        "'%s'" %(temp_svg, ),
+        "-e",
+        "/tmp/out.png"
+    ])
+    print cmd
+    res = os.system(cmd)
+    if res != 0:
+        break
+    os.rename("/tmp/out.png", png_name)
+    with open(hash_fname, "w") as f:
+        f.write(new_hash)
+    os.unlink(temp_svg)
+    print "mv /tmp/output.png --> %s" %(png_name, )
